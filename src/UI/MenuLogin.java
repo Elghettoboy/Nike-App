@@ -2,7 +2,6 @@ package UI;
 
 import Models.Usuarios;
 import Controller.Cliente.UsuarioClienteController;
-import UI.MenusAdmin.MenuPrincipalAdmin;
 import UI.MenusClientes.MenuPrincipalCliente;
 
 import java.util.Scanner;
@@ -22,7 +21,7 @@ public class MenuLogin {
 
     public static void pausa() {
         System.out.println("\nPresiona ENTER para continuar...");
-        sc.nextLine();
+        sc.nextLine(); // Espera a que el usuario presione Enter
     }
 
     public static void mostrarMenuLogin() {
@@ -61,22 +60,41 @@ public class MenuLogin {
     }
 
     private static void iniciarSesion() {
-        limpiarpantalla();
-        System.out.println("------ INICIAR SESIÓN ------");
-        System.out.print("Correo: ");
-        String correo = sc.nextLine();
-        System.out.print("Contraseña: ");
-        String contraseña = sc.nextLine();
+        int intentos = 0;
+        boolean sesionIniciada = false;
 
-        Usuarios usuario = usuarioController.obtenerUsuario(correo);
-
-        if (usuario != null && usuarioController.login(correo, contraseña)) {
+        while (intentos < 3 && !sesionIniciada) {
             limpiarpantalla();
-            System.out.println("Inicio de sesión exitoso. Bienvenido, " + usuario.getNombre() + " (" + usuario.getRol() + ")");
-            pausa();
-            mostrarMenuPorRol(usuario);
-        } else {
-            System.out.println("Correo o contraseña incorrectos.");
+            System.out.println("------ INICIAR SESIÓN ------");
+            if (intentos > 0) {
+                System.out.println("Intento " + (intentos + 1) + " de 3.");
+            }
+            System.out.print("Correo: ");
+            String correo = sc.nextLine();
+            System.out.print("Contraseña: ");
+            String contraseña = sc.nextLine();
+
+            Usuarios usuario = usuarioController.obtenerUsuario(correo);
+
+            if (usuario != null && usuarioController.login(correo, contraseña)) {
+                limpiarpantalla();
+                System.out.println("Inicio de sesión exitoso. ¡Bienvenido, " + usuario.getNombre() + "!");
+                sesionIniciada = true; // Marcar como sesión iniciada
+                pausa();
+                MenuPrincipalCliente.mostrarMenu(usuario);
+            } else {
+                intentos++;
+                System.out.println("Correo o contraseña incorrectos.");
+                if (intentos < 3) {
+                    System.out.println("Te quedan " + (3 - intentos) + " intentos.");
+                }
+                pausa();
+            }
+        }
+
+        if (!sesionIniciada && intentos == 3) {
+            limpiarpantalla();
+            System.out.println("Has excedido el número de intentos permitidos.");
             pausa();
         }
     }
@@ -94,13 +112,10 @@ public class MenuLogin {
         nuevo.setCorreo(sc.nextLine());
 
         System.out.print("Contraseña: ");
-        nuevo.setContraseña(sc.nextLine());
+        nuevo.setContraseña(sc.nextLine()); // Asegúrate de que el método se llame setContraseña
 
         System.out.print("Teléfono: ");
         nuevo.setTelefono(sc.nextLine());
-
-        System.out.print("Rol (admin / cliente): ");
-        nuevo.setRol(sc.nextLine().toLowerCase());
 
         if (usuarioController.registrar(nuevo)) {
             limpiarpantalla();
@@ -109,13 +124,5 @@ public class MenuLogin {
             System.out.println("Error al registrar usuario.");
         }
         pausa();
-    }
-
-    private static void mostrarMenuPorRol(Usuarios usuario) {
-        if (usuario.getRol().equalsIgnoreCase("admin")) {
-            MenuPrincipalAdmin.mostrarMenu(usuario);
-        } else {
-            MenuPrincipalCliente.mostrarMenu(usuario);
-        }
     }
 }

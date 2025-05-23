@@ -1,7 +1,9 @@
 package Service.Clientes;
+
 import Models.Review;
 import Repository.ReviewDAO;
-
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewClienteService {
@@ -9,7 +11,13 @@ public class ReviewClienteService {
     private ReviewDAO reviewDAO;
 
     public ReviewClienteService() {
-        this.reviewDAO = new ReviewDAO();
+        try {
+            this.reviewDAO = new ReviewDAO();
+        } catch (Exception e) {
+            
+            System.err.println("Error al inicializar ReviewDAO en ReviewClienteService: " + e.getMessage());
+            throw new RuntimeException("No se pudo inicializar el servicio de reviews.", e);
+        }
     }
 
     public boolean crearReview(Review review) {
@@ -32,4 +40,11 @@ public class ReviewClienteService {
         return reviewDAO.eliminar(id);
     }
 
+    public List<Review> listarReviewsPorUsuario(int usuarioId) {
+        if (this.reviewDAO == null) {
+            System.err.println("ReviewDAO no está inicializado en ReviewClienteService.");
+            return new ArrayList<>();
+        }
+        return reviewDAO.listarPorUsuarioId(usuarioId);
+    }
 }

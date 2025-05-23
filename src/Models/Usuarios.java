@@ -1,16 +1,15 @@
 package Models;
 
-
 public class Usuarios {
-
     private int usuarioId;
     private String nombre;
     private String correo;
     private String contraseña;
     private String telefono;
     private String rol;
-    private Carrito carrito;
+    private String direccion; 
 
+    // Constructores, otros getters y setters 
     public int getUsuarioId() {
         return usuarioId;
     }
@@ -59,16 +58,12 @@ public class Usuarios {
         this.rol = rol;
     }
 
-    public Carrito getCarrito() {
-        return carrito;
+   
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setCarrito(Carrito carrito) {
-        this.carrito = carrito;
-    }
-
-    @Override
-    public String toString() {
-        return nombre;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 }

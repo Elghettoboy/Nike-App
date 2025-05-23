@@ -4,18 +4,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import Models.Usuarios;
+import Config.ConnectionDB;
 
-public class UsuariosDAO extends BaseRepository {
+public class UsuariosDAO {
 
     public boolean insertar(Usuarios usuario) {
-        String query = "insert into tienda_deportiva.usuarios (nombre, correo, contraseña, telefono, rol) values (?, ?, ?, ?, ?)";
+        String query = "insert into tienda_deportiva.usuarios (nombre, correo, contraseña, telefono) values (?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = ConnectionDB.getConn();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, usuario.getNombre());
             stmt.setString(2, usuario.getCorreo());
             stmt.setString(3, usuario.getContraseña());
             stmt.setString(4, usuario.getTelefono());
-            stmt.setString(5, usuario.getRol()); 
 
             stmt.executeUpdate();
             return true;
@@ -29,7 +30,8 @@ public class UsuariosDAO extends BaseRepository {
     public Usuarios obtenerUsuarioPorCorreo(String correo) {
         String query = "select * from tienda_deportiva.usuarios where correo = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = ConnectionDB.getConn();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
 
@@ -40,7 +42,7 @@ public class UsuariosDAO extends BaseRepository {
                 usuario.setCorreo(rs.getString("correo"));
                 usuario.setContraseña(rs.getString("contraseña"));
                 usuario.setTelefono(rs.getString("telefono"));
-                usuario.setRol(rs.getString("rol"));
+
                 return usuario;
             }
 
@@ -54,8 +56,9 @@ public class UsuariosDAO extends BaseRepository {
         List<Usuarios> lista = new ArrayList<>();
         String query = "select * from  tienda_deportiva.usuarios";
 
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+        try (Connection conn = ConnectionDB.getConn();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
                 Usuarios usuario = new Usuarios();
@@ -64,7 +67,7 @@ public class UsuariosDAO extends BaseRepository {
                 usuario.setCorreo(rs.getString("correo"));
                 usuario.setContraseña(rs.getString("contraseña"));
                 usuario.setTelefono(rs.getString("telefono"));
-                usuario.setRol(rs.getString("rol"));
+
                 lista.add(usuario);
             }
 
@@ -75,15 +78,14 @@ public class UsuariosDAO extends BaseRepository {
     }
 
     public boolean actualizar(Usuarios usuario) {
-        String sql = "update tienda_deportiva.usuarios set nombre = ?, correo = ?, contraseña = ?, telefono = ?, rol = ? where usuario_id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "update tienda_deportiva.usuarios set nombre = ?, correo = ?, contraseña = ?, telefono = ? WHERE usuario_id = ?";
+        try (Connection conn = ConnectionDB.getConn();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, usuario.getNombre());
             stmt.setString(2, usuario.getCorreo());
             stmt.setString(3, usuario.getContraseña());
             stmt.setString(4, usuario.getTelefono());
-            stmt.setString(5, usuario.getRol());
-            stmt.setInt(6, usuario.getUsuarioId());
+            stmt.setInt(5, usuario.getUsuarioId());
 
             stmt.executeUpdate();
             return true;
@@ -97,7 +99,8 @@ public class UsuariosDAO extends BaseRepository {
     public boolean eliminar(int usuarioId) {
         String query = "delete from tienda_deportiva.usuarios where usuario_id = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = ConnectionDB.getConn();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, usuarioId);
             stmt.executeUpdate();
             return true;
@@ -107,7 +110,44 @@ public class UsuariosDAO extends BaseRepository {
             return false;
         }
     }
+
+    public String obtenerNombreClientePorId(int clienteId) {
+        String sql = "SELECT nombre FROM tienda_deportiva.usuarios WHERE usuario_id = ?";
+        try (Connection conn = ConnectionDB.getConn(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, clienteId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nombre");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener nombre del cliente: " + e.getMessage());
+        }
+        return "Desconocido";
+    }
+
+    public Usuarios obtenerPorId(int usuarioId) {
+        String sql = "SELECT * FROM tienda_deportiva.usuarios WHERE usuario_id = ?";
+        try (Connection conn = ConnectionDB.getConn();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, usuarioId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuarios usuario = new Usuarios();
+                    usuario.setUsuarioId(rs.getInt("usuario_id"));
+                    usuario.setNombre(rs.getString("nombre"));
+                    usuario.setCorreo(rs.getString("correo"));
+                    usuario.setContraseña(rs.getString("contraseña")); // Considera no cargar la contraseña a menos que
+                                                                       // sea necesario
+                    usuario.setTelefono(rs.getString("telefono"));
+                    usuario.setRol(rs.getString("rol"));
+                    usuario.setDireccion(rs.getString("direccion")); // Asumiendo que la columna 'direccion' existe
+                    return usuario;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener usuario por ID: " + e.getMessage());
+        }
+        return null;
+    }
 }
-
-
-    

@@ -2,7 +2,8 @@ package Service.Clientes;
 
 import Models.Carrito;
 import Repository.CarritoDAO;
-
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CarritoClienteService {
@@ -10,38 +11,41 @@ public class CarritoClienteService {
     private CarritoDAO carritoDAO;
 
     public CarritoClienteService() {
-        this.carritoDAO = new CarritoDAO();
+        try {
+            this.carritoDAO = new CarritoDAO();
+        } catch (SQLException e) {
+            System.err.println("Error al inicializar CarritoDAO en CarritoClienteService: " + e.getMessage());
+            throw new RuntimeException("No se pudo inicializar el servicio de carrito.", e);
+        }
     }
 
     public boolean crearCarrito(Carrito carrito) {
-        // Validación: que el usuario tenga solo un carrito activo podría ir aquí si decides hacerlo.
+        if (this.carritoDAO == null) return false;
         return carritoDAO.insertar(carrito);
     }
 
     public Carrito obtenerCarritoPorId(int carritoId) {
+        if (this.carritoDAO == null) return null;
         return carritoDAO.obtenerPorId(carritoId);
     }
 
     public List<Carrito> obtenerTodosLosCarritos() {
-        return carritoDAO.obtenerTodos();
+        if (this.carritoDAO == null) return new ArrayList<>();
+        return carritoDAO.obtenerTodosLosCarritos();
     }
 
     public boolean actualizarCarrito(Carrito carrito) {
+        if (this.carritoDAO == null) return false;
         return carritoDAO.actualizar(carrito);
     }
 
     public boolean eliminarCarrito(int carritoId) {
+        if (this.carritoDAO == null) return false;
         return carritoDAO.eliminar(carritoId);
     }
 
-    
-    public Carrito obtenerCarritoPorUsuarioId(int usuarioId) {
-        List<Carrito> carritos = carritoDAO.obtenerTodos();
-        for (Carrito c : carritos) {
-            if (c.getUsuarioId() == usuarioId) {
-                return c; 
-            }
-        }
-        return null;
+    public Carrito obtenerCarritoActivoPorUsuarioId(int usuarioId) {
+        if (this.carritoDAO == null) return null;
+        return carritoDAO.obtenerActivoPorUsuarioId(usuarioId);
     }
 }

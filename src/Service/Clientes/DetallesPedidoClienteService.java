@@ -1,5 +1,6 @@
 package Service.Clientes;
 
+import java.sql.SQLException;
 import java.util.List;
 import Models.DetallesPedido;
 import Repository.DetallesPedidoDAO;
@@ -7,7 +8,7 @@ import Repository.DetallesPedidoDAO;
 public class DetallesPedidoClienteService {
     private DetallesPedidoDAO detallesPedidoDAO;
 
-    public DetallesPedidoClienteService() {
+    public DetallesPedidoClienteService() throws SQLException {
         this.detallesPedidoDAO = new DetallesPedidoDAO();
     }
 

@@ -1,33 +1,52 @@
 package Controller.Cliente;
+
 import Models.ItemsCarrito;
 import Service.Clientes.ItemsCarritoClienteService;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ItemsCarritoClienteController {
+
     private ItemsCarritoClienteService itemsCarritoService;
 
     public ItemsCarritoClienteController() {
-        this.itemsCarritoService = new ItemsCarritoClienteService();
+        try {
+            this.itemsCarritoService = new ItemsCarritoClienteService();
+        } catch (RuntimeException e) {
+            System.err.println("Error al inicializar ItemsCarritoClienteService: " + e.getMessage());
+            throw e;
+        }
     }
 
-    public boolean agregarItem(ItemsCarrito item) {
-        return itemsCarritoService.agregarItem(item);
+    public boolean agregarOActualizarItemAlCarrito(ItemsCarrito item) {
+        if (this.itemsCarritoService == null) return false;
+        return itemsCarritoService.agregarOActualizarItem(item);
     }
 
-    public ItemsCarrito obtenerItemPorCarrito(int itemId) {
-        return itemsCarritoService.obtenerItemPorCarritoId(itemId);
+    public ItemsCarrito obtenerItemPorId(int carritoId, int productoId) {
+        if (this.itemsCarritoService == null) return null;
+        return itemsCarritoService.obtenerItemPorId(carritoId, productoId);
     }
 
-    public List<ItemsCarrito> listarItemsCarrito() {
-        return itemsCarritoService.listarItems();
+    public List<ItemsCarrito> obtenerItemsPorCarritoId(int carritoId) {
+        if (this.itemsCarritoService == null) return new ArrayList<>();
+        return itemsCarritoService.obtenerItemsPorCarritoId(carritoId);
     }
 
-    public boolean actualizarItemCarrito(ItemsCarrito item) {
+    public boolean actualizarItem(ItemsCarrito item) {
+        if (this.itemsCarritoService == null) return false;
         return itemsCarritoService.actualizarItem(item);
     }
 
-    public boolean eliminarItemCarrito(int itemId) {
-        return itemsCarritoService.eliminarItem(itemId);
-    }   
-
+    public boolean eliminarItem(int carritoId, int productoId) {
+        if (this.itemsCarritoService == null) return false;
+        return itemsCarritoService.eliminarItem(carritoId, productoId);
+    }
+    
+    public boolean eliminarTodosLosItemsDeUnCarrito(int carritoId) {
+        if (this.itemsCarritoService == null) return false;
+        return itemsCarritoService.eliminarItemsPorCarritoId(carritoId);
+    }
+    
+   
 }

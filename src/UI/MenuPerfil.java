@@ -3,7 +3,7 @@ package UI;
 import java.util.Scanner;
 import Models.Usuarios;
 import Controller.Cliente.UsuarioClienteController;
-import UI.MenuLogin;
+
 
 public class MenuPerfil {
 private static final Scanner sc = new Scanner(System.in);
@@ -28,7 +28,7 @@ public static void mostrarMenuPerfil(Usuarios usuario) {
         System.out.println("Nombre: " + usuario.getNombre());
         System.out.println("Correo: " + usuario.getCorreo());
         System.out.println("Teléfono: " + usuario.getTelefono());
-        System.out.println("Rol: " + usuario.getRol());
+        
         System.out.println();
         System.out.println("------ MENÚ PERFIL ------");
         System.out.println("1. Actualizar Perfil");

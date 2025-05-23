@@ -9,7 +9,12 @@ public class CarritoClienteController {
     private CarritoClienteService carritoService;
 
     public CarritoClienteController() {
-        this.carritoService = new CarritoClienteService();
+        try {
+            this.carritoService = new CarritoClienteService();
+        } catch (RuntimeException e) {
+            System.err.println("Error al inicializar CarritoClienteService: " + e.getMessage());
+            throw e;
+        }
     }
 
     public boolean crearCarrito(Carrito carrito) {
@@ -32,7 +37,7 @@ public class CarritoClienteController {
         return carritoService.eliminarCarrito(carritoId);
     }
 
-    public Carrito obtenerCarritoPorUsuarioId(int usuarioId) {
-        return carritoService.obtenerCarritoPorUsuarioId(usuarioId);
+    public Carrito obtenerCarritoActivoPorUsuarioId(int usuarioId) {
+        return carritoService.obtenerCarritoActivoPorUsuarioId(usuarioId);
     }
 }

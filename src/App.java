@@ -1,22 +1,18 @@
-import UI.MenuLogin;
 import Config.ConnectionDB;
+import UI.MenuLogin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
 public class App {
-
     public static void main(String[] args) {
         try {
-            // Intentar conectar a la base de datos
+            // Verificar conexión a la base de datos (opcional, solo para testeo inicial)
             Connection conn = ConnectionDB.getConn();
             System.out.println("Conexión exitosa a la base de datos.");
+            ConnectionDB.closeConnection(conn); // se cierra porque DAOs usarán su propia conexión
 
-            // Cerrar la conexión inicial (ya se reutiliza dentro de DAOs)
-            ConnectionDB.closeConnection(conn);
-
-            // Mostrar el menú login
+            // Iniciar el sistema mostrando el menú de login
             MenuLogin.mostrarMenuLogin();
 
         } catch (SQLException e) {
@@ -25,4 +21,3 @@ public class App {
         }
     }
 }
-

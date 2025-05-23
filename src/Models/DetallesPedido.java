@@ -7,6 +7,7 @@ public class DetallesPedido {
     private int productoId;
     private int cantidad;
     private double precio;
+    private String nombreProducto; // Nuevo atributo
     
     public int getDetalleId() {
         return detalleId;
@@ -37,6 +38,12 @@ public class DetallesPedido {
     }
     public void setPrecio(double precio) {
         this.precio = precio;
+    }
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
     }
 
 }

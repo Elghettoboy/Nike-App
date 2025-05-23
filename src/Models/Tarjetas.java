@@ -5,7 +5,7 @@ public class Tarjetas {
     private int metodoId;
     private String ultimosDigitos;
     private String marca;
-    private java.sql.Date fechaExpiracion;
+    private String fechaExpiracion;
     private String token;
     
     public int getTarjetaId() {
@@ -32,10 +32,10 @@ public class Tarjetas {
     public void setMarca(String marca) {
         this.marca = marca;
     }
-    public java.sql.Date getFechaExpiracion() {
+    public String getFechaExpiracion() {
         return fechaExpiracion;
     }
-    public void setFechaExpiracion(java.sql.Date fechaExpiracion) {
+    public void setFechaExpiracion(String fechaExpiracion) {
         this.fechaExpiracion = fechaExpiracion;
     }
     public String getToken() {
@@ -44,7 +44,4 @@ public class Tarjetas {
     public void setToken(String token) {
         this.token = token;
     }
-
-    
-
 }

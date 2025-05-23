@@ -1,11 +1,13 @@
 package Models;
 
-public class ItemsCarrito {
-
+public class ItemsCarritoConProducto {
     private int carritoId;
     private int productoId;
     private int cantidad;
+    private String nombreProducto;
+    private double precioProducto;
 
+    // Getters y setters
     public int getCarritoId() {
         return carritoId;
     }
@@ -30,8 +32,6 @@ public class ItemsCarrito {
         this.cantidad = cantidad;
     }
 
-    private String nombreProducto;
-
     public String getNombreProducto() {
         return nombreProducto;
     }
@@ -40,11 +40,11 @@ public class ItemsCarrito {
         this.nombreProducto = nombreProducto;
     }
 
-    @Override
-    public String toString() {
-        return "Carrito ID: " + carritoId +
-                ", Producto: " + (nombreProducto != null ? nombreProducto : "N/A") +
-                ", Cantidad: " + cantidad;
+    public double getPrecioProducto() {
+        return precioProducto;
     }
 
+    public void setPrecioProducto(double precioProducto) {
+        this.precioProducto = precioProducto;
+    }
 }
