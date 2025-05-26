@@ -142,7 +142,49 @@ public class CarritoDAO {
     }
 
     public boolean eliminarPorUsuarioId(int usuarioId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'eliminarPorUsuarioId'");
+        // Paso 1: Obtener todos los IDs de los carritos asociados con el usuarioId.
+        String sqlSelectCarritos = "SELECT carrito_id FROM tienda_deportiva.carritos WHERE usuario_id = ?";
+        List<Integer> idsDeCarritosAEliminar = new ArrayList<>();
+        
+        try (Connection conn = ConnectionDB.getConn();
+             PreparedStatement stmtSelect = conn.prepareStatement(sqlSelectCarritos)) {
+            
+            stmtSelect.setInt(1, usuarioId);
+            try (ResultSet rs = stmtSelect.executeQuery()) {
+                while (rs.next()) {
+                    idsDeCarritosAEliminar.add(rs.getInt("carrito_id"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener carritos para el usuario_id " + usuarioId + " durante la eliminación: " + e.getMessage());
+            return false; // Fallo crítico al obtener la lista de carritos, no se puede proceder.
+        }
+
+        if (idsDeCarritosAEliminar.isEmpty()) {
+            // No hay carritos para este usuario, se considera una "eliminación" exitosa.
+            System.out.println("No se encontraron carritos para el usuario_id: " + usuarioId + ". No hay nada que eliminar.");
+            return true;
+        }
+
+        boolean todosEliminadosCorrectamente = true;
+        // Paso 2: Iterar sobre cada carritoId y llamar al método eliminar(carritoId) existente.
+        for (int carritoId : idsDeCarritosAEliminar) {
+            if (!this.eliminar(carritoId)) {
+                // El método `eliminar(carritoId)` ya imprime su propio mensaje de error.
+                System.err.println("Fallo al procesar la eliminación completa del carrito con id " + carritoId + " para el usuario " + usuarioId + ".");
+                todosEliminadosCorrectamente = false;
+                // Se podría decidir detener todo el proceso aquí si una eliminación falla:
+                // return false; 
+                // Por ahora, se intentará eliminar los demás carritos.
+            }
+        }
+
+        if (todosEliminadosCorrectamente) {
+            System.out.println("Todos los carritos (" + idsDeCarritosAEliminar.size() + ") del usuario_id: " + usuarioId + " han sido procesados para eliminación.");
+        } else {
+            System.err.println("No todos los carritos del usuario_id: " + usuarioId + " pudieron ser eliminados completamente.");
+        }
+        
+        return todosEliminadosCorrectamente;
     }
 }
